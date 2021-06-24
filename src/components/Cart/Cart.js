@@ -35,9 +35,9 @@ const Cart = (props) => {
 				Items Tax [10%]: <span className="float-right">$ {fixedToNumber(tax)}</span>
 			</p>
       <hr />
-      <p style={{color: 'rgb(190, 0, 0)'}}>
+      <h5 style={{color: 'rgb(12, 148, 1)'}}>
 				<b>Grand Total: <span className="float-right">$ {fixedToNumber(price + shipping + tax)}</span></b>
-			</p>
+			</h5>
 		</div>
 	);
 };
