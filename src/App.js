@@ -10,8 +10,9 @@ import Shop from "./components/Shop/Shop";
 function App() {
 	return (
 		<div>
-			<Header />
+			
 			<Router>
+			<Header />
 				<Switch>
 					<Route path="/shop">
 						<Shop />
