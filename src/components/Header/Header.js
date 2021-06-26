@@ -18,7 +18,7 @@ const Header = () => {
 							Order Review
 						</Nav.Link>
 						<Nav.Link className="nav-link" href="/inventory">
-							Manage Inventory here
+							Manage Inventory
 						</Nav.Link>
 					</Nav>
 				</Container>

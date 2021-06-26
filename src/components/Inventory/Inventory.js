@@ -1,11 +1,12 @@
-import React from 'react';
+import React from "react";
+import { Container } from "react-bootstrap";
 
 const Inventory = () => {
-  return (
-    <div>
-      <h1>Inventory Management Coming Soon.</h1>
-    </div>
-  );
+	return (
+		<Container>
+			<h1>Inventory Management Coming Soon.</h1>
+		</Container>
+	);
 };
 
 export default Inventory;
