@@ -10,7 +10,7 @@ import Product from "../Product/Product";
 
 const Shop = () => {
 	const first10 = fakeData.slice(0, 10);
-	const [products, setProducts] = useState(first10);
+	const [products] = useState(first10);
 	const [cart, setCart] = useState([]);
 
 	useEffect(() => {

@@ -6,7 +6,7 @@ import Rating from "../Rating/Rating";
 import { Link } from "react-router-dom";
 
 const Product = (props) => {
-	const { key, category, name, img, features, price, star, seller, stock } = props.product;
+	const { key, name, img, features, price, star, seller, stock } = props.product;
 
 	return (
 		<div className="d-flex py-4 border-bottom">
