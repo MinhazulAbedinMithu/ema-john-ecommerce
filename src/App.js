@@ -7,6 +7,7 @@ import NoMatch from "./components/NoMatch/NoMatch";
 import ProductDetails from "./components/ProductDetails/ProductDetails";
 import Review from "./components/Review/Review";
 import Shop from "./components/Shop/Shop";
+import Login from "./components/Login/Login";
 function App() {
 	return (
 		<div>
@@ -28,6 +29,9 @@ function App() {
 					</Route>
 					<Route path="/product/:productKey">
 						<ProductDetails/>
+					</Route>
+					<Route path="/product/login">
+						<Login/>
 					</Route>
 					<Route path="*">
 						<NoMatch />
