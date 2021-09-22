@@ -11,7 +11,6 @@ import Login from "./components/Login/Login";
 function App() {
 	return (
 		<div>
-			
 			<Router>
 			<Header />
 				<Switch>
@@ -30,7 +29,7 @@ function App() {
 					<Route path="/product/:productKey">
 						<ProductDetails/>
 					</Route>
-					<Route path="/product/login">
+					<Route path="/login">
 						<Login/>
 					</Route>
 					<Route path="*">

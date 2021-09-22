@@ -16,6 +16,7 @@ const Login = () => {
 		SignedInSuccessMessage: "",
 		SignedUpSuccessMessage: "",
 	});
+	
 	const auth = getAuth();
 	const googleProvider = new GoogleAuthProvider();
 	const handleGoogleSignIn = (auth, provider) => {
