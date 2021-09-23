@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./Header.css";
 import logo from "../../images/logo.png";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../App";
 const Header = () => {
+	const [loggedInUser, setLoggedInUser] = useContext(UserContext);
+	const {email, name, photo} = loggedInUser;
+	
 	return (
 		<div>
 			<div href="#home" className="logo">
@@ -21,6 +25,18 @@ const Header = () => {
 						<Link className="nav-link" to="/inventory">
 							Manage Inventory
 						</Link>
+
+						{
+							email ? (
+								<Link className="nav-link bg-dark rounded border-1 border-warning" to="">
+								<img src={photo} alt="profile" className="img-fluid w-50 rounded-circle"/>
+						</Link>
+							) : (
+								<Link className="nav-link bg-warning rounded px-4 text-dark border-0" to="/login">
+							Login
+						</Link>
+							)
+						}
 					</Nav>
 				</Container>
 			</Navbar>

@@ -22,6 +22,7 @@ const Login = () => {
 		isSignIn: false,
 		name: "",
 		email: "",
+		photo: "",
 		password: "",
 		errorMessage: "",
 		SignedInSuccessMessage: "",
@@ -73,8 +74,10 @@ const Login = () => {
 		const validUser = { ...user };
 		if (isFieldValid) {
 			validUser[name] = value;
+			// validUser[isSignIn] = true;
 		}
 		setUser(validUser);
+		setLoggedInUser(validUser);
 	};
 
 	const handleSubmit = (e) => {
@@ -82,7 +85,6 @@ const Login = () => {
 			createUserWithEmailAndPassword(auth, user.email, user.password)
 				.then((result) => {
 					const user = result.user;
-					history.replace(from);
 				})
 				.catch((error) => {
 					console.log(error.message);
