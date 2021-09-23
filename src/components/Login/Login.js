@@ -3,7 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { initializeApp } from "firebase/app";
 import firebaseConfig from "./firebase.config";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+	getAuth,
+	signInWithPopup,
+	GoogleAuthProvider,
+	FacebookAuthProvider,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	signOut
+} from "firebase/auth";
 const app = initializeApp(firebaseConfig);
 const Login = () => {
 	const [isNewUser, setIsNewUser] = useState(false);
@@ -16,9 +24,11 @@ const Login = () => {
 		SignedInSuccessMessage: "",
 		SignedUpSuccessMessage: "",
 	});
-	
+
 	const auth = getAuth();
 	const googleProvider = new GoogleAuthProvider();
+	const facebookProvider = new FacebookAuthProvider();
+
 	const handleGoogleSignIn = (auth, provider) => {
 		signInWithPopup(auth, provider)
 			.then((result) => {
@@ -30,20 +40,68 @@ const Login = () => {
 					photo: photoURL,
 				};
 				setUser(signedInUser);
+				setIsNewUser(true);
+				console.log(isNewUser);
 			})
 			.catch((error) => {
 				console.log(error.message);
 			});
 	};
-	const handleFacebookSignIn = () => {};
+
+	const handleFacebookSignIn = (auth, provider) => {
+		signInWithPopup(auth, provider)
+		.then((result) => {
+			console.log(result);
+		})
+	};
+
 	const handleOnBlur = (e) => {
 		let isFieldValid = true;
 		const [name, value] = [e.target.name, e.target.value];
-		isFieldValid = name === "name" && /(\S.{2,})/.test(value);
-		isFieldValid = name === "email" && /\S+@\S+\.\S+/.test(value);
-		isFieldValid = name === "password" && /((?=.*\d)(\S).{6,})/.test(value);
+		if (name === "name") isFieldValid = /\S/.test(value);
+		if (name === "email") isFieldValid = /\S+@\S+\.\S+/.test(value);
+		if (name === "password") isFieldValid = /((?=.*\d)(\S).{6,})/.test(value);
+
+		const validUser = { ...user };
+		if (isFieldValid) {
+			validUser[name] = value;
+		}
+		setUser(validUser);
 	};
-	const handleSubmit = () => {};
+
+	const handleSubmit = (e) => {
+		if (isNewUser && user.email && user.password) {
+			createUserWithEmailAndPassword(auth, user.email, user.password)
+				.then((result) => {
+					const user = result.user;
+					console.log(user);
+				})
+				.catch((error) => {
+					console.log(error.message);
+				});
+		}
+		if (!isNewUser && user.email && user.password) {
+			signInWithEmailAndPassword(auth, user.email, user.password)
+				.then((result) => {
+					const user = result.user;
+					console.log(user);
+				})
+				.catch((error) => {
+					console.log(error.message);
+				});
+		}
+		e.target.reset();
+		e.preventDefault();
+	};
+
+	const handleSignOut = () => {
+		signOut(auth).then(() => {
+			console.log("Sign-out successful.");
+		}).catch((error) => {
+			console.log(error.message);
+		});
+	}
+
 	return (
 		<div className="container">
 			{" "}
@@ -53,7 +111,9 @@ const Login = () => {
 					{" "}
 					<div className="bg-white text-dark rounded shadow">
 						{" "}
-						<h2 className="text-center">Login</h2>{" "}
+						<h2 className="text-center">
+							{isNewUser ? "Sign Up" : "Sign In"}
+						</h2>{" "}
 						<div className="form-area">
 							{" "}
 							<div className="continue-box text-center my-3">
@@ -66,7 +126,7 @@ const Login = () => {
 									{" "}
 									<FontAwesomeIcon icon={faGoogle} size="lg" />{" "}
 								</button>{" "}
-								<button className="ml-2 bg-transparent border border-warning rounded-circle display-5 p-2 text-primary">
+								<button className="ml-2 bg-transparent border border-warning rounded-circle display-5 p-2 text-primary" onClick={() => handleFacebookSignIn(auth, facebookProvider)} >
 									{" "}
 									<FontAwesomeIcon icon={faFacebook} size="lg" />{" "}
 								</button>{" "}
@@ -75,15 +135,18 @@ const Login = () => {
 								{" "}
 								<form action="" onSubmit={handleSubmit}>
 									{" "}
-									<input
-										type="text"
-										name="name"
-										id="name"
-										placeholder="Enter you Name"
-										className="border border-3 border-warning rounded"
-										onBlur={handleOnBlur}
-										required
-									/>{" "}
+									{isNewUser && (
+										<input
+											type="text"
+											name="name"
+											id="name"
+											placeholder="Enter you Name"
+											className="border border-3 border-warning rounded"
+											onBlur={handleOnBlur}
+											required
+										/>
+									)}{" "}
+									<br />
 									<input
 										type="email"
 										name="email"
@@ -93,6 +156,7 @@ const Login = () => {
 										onBlur={handleOnBlur}
 										required
 									/>{" "}
+									<br />
 									<input
 										type="password"
 										name="password"
@@ -102,6 +166,7 @@ const Login = () => {
 										onBlur={handleOnBlur}
 										required
 									/>{" "}
+									<br />
 									<input
 										type="submit"
 										name="submit"
@@ -115,10 +180,9 @@ const Login = () => {
 								{" "}
 								<h6>
 									{" "}
-									<span>Don't have an Account?</span>{" "}
-									<button className="ml-2 border-1 border-warning rounded-pill bg-transparent">
-										{" "}
-										Sign Up{" "}
+									<span>{isNewUser ? "Don't have an Account?" : "Have an Account?"}</span>{" "}
+									<button className="ml-2 border-1 border-warning rounded-pill bg-transparent" onClick={() => setIsNewUser(!isNewUser)}>
+										{isNewUser ? "Login" : "Register"}
 									</button>{" "}
 								</h6>{" "}
 							</div>{" "}
