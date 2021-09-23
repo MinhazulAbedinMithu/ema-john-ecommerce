@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { initializeApp } from "firebase/app";
@@ -10,9 +10,12 @@ import {
 	FacebookAuthProvider,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
-	signOut
+	signOut,
 } from "firebase/auth";
+import { UserContext } from "../../App";
+import { useHistory, useLocation } from "react-router";
 const app = initializeApp(firebaseConfig);
+
 const Login = () => {
 	const [isNewUser, setIsNewUser] = useState(false);
 	const [user, setUser] = useState({
@@ -24,6 +27,12 @@ const Login = () => {
 		SignedInSuccessMessage: "",
 		SignedUpSuccessMessage: "",
 	});
+
+	const [loggedInUser, setLoggedInUser] = useContext(UserContext);
+
+	let history = useHistory();
+	let location = useLocation();
+	let { from } = location.state || { from: { pathname: "/" } };
 
 	const auth = getAuth();
 	const googleProvider = new GoogleAuthProvider();
@@ -40,8 +49,8 @@ const Login = () => {
 					photo: photoURL,
 				};
 				setUser(signedInUser);
-				setIsNewUser(true);
-				console.log(isNewUser);
+				setLoggedInUser(signedInUser);
+				history.replace(from);
 			})
 			.catch((error) => {
 				console.log(error.message);
@@ -49,10 +58,9 @@ const Login = () => {
 	};
 
 	const handleFacebookSignIn = (auth, provider) => {
-		signInWithPopup(auth, provider)
-		.then((result) => {
+		signInWithPopup(auth, provider).then((result) => {
 			console.log(result);
-		})
+		});
 	};
 
 	const handleOnBlur = (e) => {
@@ -74,7 +82,7 @@ const Login = () => {
 			createUserWithEmailAndPassword(auth, user.email, user.password)
 				.then((result) => {
 					const user = result.user;
-					console.log(user);
+					history.replace(from);
 				})
 				.catch((error) => {
 					console.log(error.message);
@@ -84,7 +92,7 @@ const Login = () => {
 			signInWithEmailAndPassword(auth, user.email, user.password)
 				.then((result) => {
 					const user = result.user;
-					console.log(user);
+					history.replace(from);
 				})
 				.catch((error) => {
 					console.log(error.message);
@@ -95,12 +103,14 @@ const Login = () => {
 	};
 
 	const handleSignOut = () => {
-		signOut(auth).then(() => {
-			console.log("Sign-out successful.");
-		}).catch((error) => {
-			console.log(error.message);
-		});
-	}
+		signOut(auth)
+			.then(() => {
+				console.log("Sign-out successful.");
+			})
+			.catch((error) => {
+				console.log(error.message);
+			});
+	};
 
 	return (
 		<div className="container">
@@ -126,7 +136,10 @@ const Login = () => {
 									{" "}
 									<FontAwesomeIcon icon={faGoogle} size="lg" />{" "}
 								</button>{" "}
-								<button className="ml-2 bg-transparent border border-warning rounded-circle display-5 p-2 text-primary" onClick={() => handleFacebookSignIn(auth, facebookProvider)} >
+								<button
+									className="ml-2 bg-transparent border border-warning rounded-circle display-5 p-2 text-primary"
+									onClick={() => handleFacebookSignIn(auth, facebookProvider)}
+								>
 									{" "}
 									<FontAwesomeIcon icon={faFacebook} size="lg" />{" "}
 								</button>{" "}
@@ -180,8 +193,13 @@ const Login = () => {
 								{" "}
 								<h6>
 									{" "}
-									<span>{isNewUser ? "Don't have an Account?" : "Have an Account?"}</span>{" "}
-									<button className="ml-2 border-1 border-warning rounded-pill bg-transparent" onClick={() => setIsNewUser(!isNewUser)}>
+									<span>
+										{isNewUser ? "Don't have an Account?" : "Have an Account?"}
+									</span>{" "}
+									<button
+										className="ml-2 border-1 border-warning rounded-pill bg-transparent"
+										onClick={() => setIsNewUser(!isNewUser)}
+									>
 										{isNewUser ? "Login" : "Register"}
 									</button>{" "}
 								</h6>{" "}
